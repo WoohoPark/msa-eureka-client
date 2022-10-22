@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: eureka-client
+
+server:
+  port: 8889
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8888/eureka #Eureka Server 명시
+  instance:
+    hostname: localhost
