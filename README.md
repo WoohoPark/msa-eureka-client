@@ -1,4 +1,4 @@
 # msa-eureka-client-springsecurity
 
 
-Spring Security 추가 및 JPA 추가
+Spring Security+JPA 추가 정리 예정
