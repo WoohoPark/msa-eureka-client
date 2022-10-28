@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -77,25 +78,23 @@ public class JwtTokenProvider {
 		}
 	}
 
+	public String createJwtRefreshToken() {
+		Claims claims = Jwts.claims();
+		claims.put("value", UUID.randomUUID());
 
-	//refresh Token 생성
-//	public String createJwtRefreshToken() {
-//		Claims claims = Jwts.claims();
-//		claims.put("value", UUID.randomUUID());
-//
-//		return Jwts.builder()
-//				.addClaims(claims)
-//				.setExpiration(
-//						new Date(System.currentTimeMillis() + REFRESH_EXPIRED_TIME)
-//				)
-//				.setIssuedAt(new Date())
-//				.signWith(SignatureAlgorithm.HS512, SECRET)
-//				.compact();
-//	}
-//
-//	public String getUserId(String token) {
-//		return getClaimsFromJwtToken(token).getSubject();
-//	}
+		return Jwts.builder()
+				.addClaims(claims)
+				.setExpiration(
+						new Date(System.currentTimeMillis() + REFRESH_EXPIRED_TIME)
+				)
+				.setIssuedAt(new Date())
+				.signWith(SignatureAlgorithm.HS512, SECRET)
+				.compact();
+	}
+
+	public String getUserId(String token) {
+		return getClaimsFromJwtToken(token).getSubject();
+	}
 
 	public boolean equalRefreshTokenId(String refreshTokenId, String refreshToken) {
 		String compareToken = this.getRefreshTokenId(refreshToken);
@@ -105,4 +104,5 @@ public class JwtTokenProvider {
 	public String getRefreshTokenId(String token) {
 		return getClaimsFromJwtToken(token).get("value").toString();
 	}
+
 }

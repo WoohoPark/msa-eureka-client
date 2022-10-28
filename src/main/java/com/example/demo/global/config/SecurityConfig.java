@@ -1,11 +1,11 @@
 package com.example.demo.global.config;
 
+import com.example.demo.domain.token.service.RefreshTokenService;
 import com.example.demo.global.filter.HeaderAuthorizationFilter;
 import com.example.demo.global.filter.LoginAuthenticationFilter;
 import com.example.demo.global.utils.CookieProvider;
 import com.example.demo.global.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -27,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final UserDetailsService userDetailsService;
 	private final PasswordEncoder bCryptPasswordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
-//	private final RefreshTokenServiceImpl refreshTokenServiceImpl;
+	private final RefreshTokenService refreshTokenService;
 	private final CookieProvider cookieProvider;
 
 	@Override
@@ -39,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		// Custom Login Authentication 필터를 사용함
 		LoginAuthenticationFilter loginAuthenticationFilter =
-				new LoginAuthenticationFilter(authenticationManagerBean(), jwtTokenProvider,cookieProvider);
+				new LoginAuthenticationFilter(authenticationManagerBean(),jwtTokenProvider,refreshTokenService,cookieProvider);
 		loginAuthenticationFilter.setFilterProcessesUrl("/login");
 
 		http.csrf().disable();
@@ -49,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().anyRequest().permitAll();
 
 		http.addFilter(loginAuthenticationFilter);
-		http.addFilterBefore(new HeaderAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+//		http.addFilterBefore(new HeaderAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.example.demo.global.filter;
 
+import com.example.demo.domain.token.service.RefreshTokenService;
 import com.example.demo.global.dto.LoginRequest;
 import com.example.demo.global.dto.Result;
 import com.example.demo.global.utils.CookieProvider;
@@ -35,10 +36,9 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
 
 	private final AuthenticationManager authenticationManager;
 	private final JwtTokenProvider jwtTokenProvider;
-//	private final RefreshTokenServiceImpl refreshTokenServiceImpl;
+	private final RefreshTokenService refreshTokenService;
 	private final CookieProvider cookieProvider;
 
-	// login 리퀘스트 패스로 오는 요청을 판단
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -57,10 +57,9 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
 		return authentication;
 	}
 
-	// 로그인 성공 이후 토큰 생성
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
-		org.springframework.security.core.userdetails.User user = (User) authResult.getPrincipal();
+		User user = (User) authResult.getPrincipal();
 
 		List<String> roles = user.getAuthorities()
 				.stream()
@@ -68,22 +67,16 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
 				.collect(Collectors.toList());
 
 		String userId = user.getUsername();
-
 		String accessToken = jwtTokenProvider.createJwtAccessToken(userId, request.getRequestURI(), roles);
 		Date expiredTime = jwtTokenProvider.getExpiredTime(accessToken);
-		//String refreshToken = jwtTokenProvider.createJwtRefreshToken();
+		String refreshToken = jwtTokenProvider.createJwtRefreshToken();
 
-		//refreshTokenServiceImpl.updateRefreshToken(Long.valueOf(userId), jwtTokenProvider.getRefreshTokenId(refreshToken));
-
-		// 쿠키 설정
-//		ResponseCookie refreshTokenCookie = cookieProvider.createRefreshTokenCookie(refreshToken);
-
-//		Cookie cookie = cookieProvider.of(refreshTokenCookie);
-
+		refreshTokenService.updateRefreshToken(userId, jwtTokenProvider.getRefreshTokenId(refreshToken));
+		ResponseCookie refreshTokenCookie = cookieProvider.createRefreshTokenCookie(refreshToken);
+		Cookie cookie = cookieProvider.of(refreshTokenCookie);
 		response.setContentType(APPLICATION_JSON_VALUE);
-//		response.addCookie(cookie);
+		response.addCookie(cookie);
 
-		// body 설정
 		Map<String, Object> tokens = Map.of(
 				"accessToken", accessToken,
 				"expiredTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(expiredTime)
