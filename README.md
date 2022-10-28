@@ -1,4 +1,10 @@
-# msa-eureka-client-springsecurity
+# 로그인 인증 모듈 
+
+---
+
+#### Spring Security
+https://velog.io/@swiftkal/Spring-Security
 
 
-Spring Security+JPA 추가 정리 예정
+
+#### JPA+QueryDSL
