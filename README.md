@@ -1,7 +1,3 @@
-# 로그인 인증 모듈 
-
----
-
 #### Spring Security
 Spring Security란?
 애플리케이션의 보안 인증과 인가를 제공하는 프레임워크이다.
@@ -45,8 +41,6 @@ Spring Security Annotation
 
 EanableGlobalMethodSecurity 을 통해서 어노테이션을 Controller에서 사용할 수 있는데.
 
-
-
 위와 같이 요청전,요청후에 대한 인가를 명시할 수 있습니다.
 
 마무리
@@ -65,10 +59,3 @@ https://debugdaldal.tistory.com/89
 https://codevang.tistory.com/273
 https://catsbi.oopy.io/c0a4f395-24b2-44e5-8eeb-275d19e2a536
 https://www.youtube.com/watch?v=aEk-7RjBKwQ
-
-profile
-
-
-
-
-#### JPA+QueryDSL
